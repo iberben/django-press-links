@@ -22,16 +22,16 @@ def entries(request):
 
     page = request.GET.get('page')
     try:
-        press_list = paginator.page(page)
+        items = press_list.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
-        press_list = paginator.page(1)
+        items = press_list.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        press_list = paginator.page(paginator.num_pages)
+        items = press_list.page(paginator.num_pages)
 
     return {
-        'object_list': press_list,
+        'object_list': items,
         'site_url': Site.objects.get_current().domain,
     }
 
