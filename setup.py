@@ -10,6 +10,7 @@ setup(
     description="Press app",
     long_description=open('README.rst', 'r').read(),
     author='City Live nv',
+    install_requires=['django-parler==1.4', 'django-summernote==0.5.15'],
     packages=find_packages('.'),
     classifiers=[
         'Intended Audience :: Developers',

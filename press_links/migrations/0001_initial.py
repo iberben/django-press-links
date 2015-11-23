@@ -1,120 +1,53 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import django.utils.timezone
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Entry'
-        db.create_table(u'press_links_entry', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'press_links_entry_related', to=orm['auth.User'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=255)),
-            ('pub_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('status', self.gf('django.db.models.fields.IntegerField')(default=2)),
-            ('excerpt', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('source', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-        ))
-        db.send_create_signal(u'press_links', ['Entry'])
+    dependencies = [
+        ('sites', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding M2M table for field site on 'Entry'
-        m2m_table_name = db.shorten_name(u'press_links_entry_site')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('entry', models.ForeignKey(orm[u'press_links.entry'], null=False)),
-            ('site', models.ForeignKey(orm[u'sites.site'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['entry_id', 'site_id'])
-
-        # Adding model 'Link'
-        db.create_table(u'press_links_link', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('link', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('link_text', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('link_new_page', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('entry', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['press_links.Entry'])),
-        ))
-        db.send_create_signal(u'press_links', ['Link'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Entry'
-        db.delete_table(u'press_links_entry')
-
-        # Removing M2M table for field site on 'Entry'
-        db.delete_table(db.shorten_name(u'press_links_entry_site'))
-
-        # Deleting model 'Link'
-        db.delete_table(u'press_links_link')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'press_links.entry': {
-            'Meta': {'ordering': "['-pub_date']", 'object_name': 'Entry'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'press_links_entry_related'", 'to': u"orm['auth.User']"}),
-            'excerpt': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pub_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'site': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'press_links_entry_related'", 'symmetrical': 'False', 'to': u"orm['sites.Site']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '255'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'status': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        u'press_links.link': {
-            'Meta': {'object_name': 'Link'},
-            'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['press_links.Entry']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'link': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'link_new_page': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'link_text': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        u'sites.site': {
-            'Meta': {'ordering': "(u'domain',)", 'object_name': 'Site', 'db_table': "u'django_site'"},
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        }
-    }
-
-    complete_apps = ['press_links']
+    operations = [
+        migrations.CreateModel(
+            name='Entry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=255, verbose_name='title')),
+                ('slug', models.SlugField(max_length=255, verbose_name=b'slug', unique_for_date=b'pub_date')),
+                ('pub_date', models.DateTimeField(default=django.utils.timezone.now, verbose_name='publication date')),
+                ('status', models.IntegerField(default=2, verbose_name='status', choices=[(1, 'Live'), (2, 'Draft'), (3, 'Hidden')])),
+                ('excerpt', models.TextField(verbose_name='Excerpt', blank=True)),
+                ('source', models.CharField(max_length=255, verbose_name='the source for the entry', blank=True)),
+                ('author', models.ForeignKey(related_name='press_links_entry_related', verbose_name='author', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ManyToManyField(related_name='press_links_entry_related', verbose_name='Sites where the entry is published', to='sites.Site')),
+            ],
+            options={
+                'ordering': ['-pub_date'],
+                'get_latest_by': 'pub_date',
+                'verbose_name': 'Press Entry',
+                'verbose_name_plural': 'Press Entries',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Link',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('link', models.CharField(max_length=255, verbose_name='link address (add http:// for external link)')),
+                ('link_text', models.CharField(max_length=255, verbose_name='text for link')),
+                ('link_new_page', models.BooleanField(default=False, verbose_name='open link in new page')),
+                ('entry', models.ForeignKey(verbose_name='Entry', to='press_links.Entry')),
+            ],
+            options={
+                'verbose_name': 'Press Link',
+                'verbose_name_plural': 'Press Links',
+            },
+            bases=(models.Model,),
+        ),
+    ]
